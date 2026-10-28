@@ -1,0 +1,263 @@
+### 新增一名学生
+POST http://localhost:8080/students
+Content-Type: application/json    ###这是请求头，下面的是请求体，请求头和请求体之间必须用一行空行分开
+
+{
+  "name": "Eve",
+  "age": 24,
+  "classId": 2
+}
+
+
+### 更新学生信息
+PUT http://localhost:8080/students
+Content-Type: application/json
+
+{
+  "id": 1,
+  "name": "TomUpdated",
+  "age": 20,
+  "classId": 1
+}
+
+
+
+### 为了测试删除功能，先创建一条待删除的测试记录
+POST http://localhost:8080/students
+Content-Type: application/json
+
+{
+  "name": "DeleteTest",
+  "age": 99,
+  "classId": 1
+}
+
+
+### 删除刚才创建的测试学生
+DELETE http://localhost:8080/students/7
+
+
+### 查询功能也可以放在http文档里，不一定要放到浏览器里，当然，增删改也可以放到浏览器里，例如，用http文档来查询全部学生：
+GET http://localhost:8080/students
+
+### 查询 ID 为 1 的学生
+GET http://localhost:8080/students/11
+
+
+### 测试A：合法新增，预期成功
+POST http://localhost:8080/students
+Content-Type: application/json
+
+{
+  "name": "Grace",
+  "age": 26,
+  "classId": 1
+}
+
+
+### 测试B：非法新增，年龄小于1
+POST http://localhost:8080/students
+Content-Type: application/json
+
+{
+  "name": "ValidationAgeFail",
+  "age": -10,
+  "classId": 1
+}
+
+
+
+### 测试：拒绝非法更新
+PUT http://localhost:8080/students
+Content-Type: application/json
+
+{
+  "id": 10,
+  "name": "Eve",
+  "age": -10,
+  "classId": 2
+}
+
+
+
+
+### 按姓名模糊查询
+GET http://localhost:8080/students/search?name=Grace
+
+
+
+### 查询不存在的姓名
+GET http://localhost:8080/students/search?name=NobodyExists
+
+
+
+
+### 分页查询：第1页，每页5条
+GET http://localhost:8080/students/page?page=1&size=5
+
+### 分页查询：第2页，每页5条
+GET http://localhost:8080/students/page?page=2&size=5
+
+
+
+
+### 测试1：页码为0
+GET http://localhost:8080/students/page?page=0&size=5
+
+### 测试2：每页数量为0
+GET http://localhost:8080/students/page?page=1&size=0
+
+### 测试3：每页数量超过限制
+GET http://localhost:8080/students/page?page=1&size=10000
+
+
+
+
+### 第1页
+GET http://localhost:8080/students/page?page=1&size=5
+
+### 第2页
+GET http://localhost:8080/students/page?page=2&size=5
+
+### 超出总页数
+GET http://localhost:8080/students/page?page=3&size=5
+
+
+
+
+### 按姓名查询并分页：第1页
+GET http://localhost:8080/students/search/page?name=Bob&page=1&size=1
+
+### 按姓名查询并分页：第2页
+GET http://localhost:8080/students/search/page?name=Bob&page=2&size=1
+
+### 查询不存在的姓名
+GET http://localhost:8080/students/search/page?name=NobodyExists&page=1&size=5
+
+
+
+
+
+### 普通分页
+GET http://localhost:8080/students/page?page=1&size=5
+
+### 姓名模糊查询分页
+GET http://localhost:8080/students/search/page?name=Bob&page=1&size=1
+
+
+
+
+
+### 测试：更新不存在的学生
+PUT http://localhost:8080/students
+Content-Type: application/json
+
+{
+  "id": 9999,
+  "name": "TestStudent",
+  "age": 20,
+  "classId": 1
+}
+
+### 测试：删除不存在的学生
+DELETE http://localhost:8080/students/9999
+
+
+
+### 查询不存在的学生
+GET http://localhost:8080/students/9999
+
+###
+GET http://localhost:8080/students/1
+
+
+
+### 查询学生及其班级名称
+GET http://localhost:8080/students/with-class
+
+
+
+
+### 查询通信1班及其学生
+GET http://localhost:8080/classes/1/students
+
+### 查询通信2班及其学生
+GET http://localhost:8080/classes/2/students
+
+### 测试不存在的班级
+GET http://localhost:8080/classes/9999/students
+
+
+
+
+### 1. 将学生1转到班级2
+PUT http://localhost:8080/students/1/class
+Content-Type: application/json
+
+{
+  "classId": 2
+}
+
+### 2. 测试目标班级不存在
+PUT http://localhost:8080/students/1/class
+Content-Type: application/json
+
+{
+  "classId": 9999
+}
+
+### 3. 测试学生不存在
+PUT http://localhost:8080/students/9999/class
+Content-Type: application/json
+
+{
+  "classId": 2
+}
+
+### 4. 测试非法班级ID
+PUT http://localhost:8080/students/1/class
+Content-Type: application/json
+
+{
+  "classId": 0
+}
+
+
+
+
+### 查看学生1的新班级
+GET http://localhost:8080/students/1
+
+### 查看班级2的学生列表
+GET http://localhost:8080/classes/2/students
+
+### 查看班级1的学生列表
+GET http://localhost:8080/classes/1/students
+
+
+
+
+### 故意制造中途失败：最后一个学生不存在
+PUT http://localhost:8080/classes/1/students
+Content-Type: application/json
+
+{
+  "studentIds": [1, 2, 9999]
+}
+
+
+
+
+### 成功：将学生1和学生2转到班级1
+PUT http://localhost:8080/classes/1/students
+Content-Type: application/json
+
+{
+  "studentIds": [1, 2]
+}
+
+
+
+
+
+
