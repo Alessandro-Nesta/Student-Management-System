@@ -1,6 +1,6 @@
 # 学生管理系统
 
-这是一个使用 Java 编写的学生管理系统，结合了Spring Boot和Mybatis，是我的第三个项目。
+这是一个使用 Java 编写的学生信息管理系统，结合了Spring Boot和Mybatis，是我的第三个项目。
 
 ## 功能
 
